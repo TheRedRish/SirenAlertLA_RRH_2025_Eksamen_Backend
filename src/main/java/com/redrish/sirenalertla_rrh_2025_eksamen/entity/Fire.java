@@ -1,5 +1,6 @@
 package com.redrish.sirenalertla_rrh_2025_eksamen.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Emergency {
+public class Fire {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,9 +25,10 @@ public class Emergency {
     private LocalDateTime endTime;
 
     @ManyToMany
+    @JsonBackReference
     @JoinTable(
-            name = "emergency_siren",
-            joinColumns = @JoinColumn(name = "emergency_id"),
+            name = "fire_siren",
+            joinColumns = @JoinColumn(name = "fire_id"),
             inverseJoinColumns = @JoinColumn(name = "siren_id")
     )
     private List<Siren> sirens;

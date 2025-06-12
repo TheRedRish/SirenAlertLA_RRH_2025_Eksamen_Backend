@@ -26,7 +26,7 @@ public class Siren {
     private boolean isActive;
 
     @ManyToMany(mappedBy = "sirens")
-    private List<Emergency> emergency;
+    private List<Fire> fire;
 
     public Siren(Location location, SirenStatus status, boolean isActive) {
         this.location = location;
