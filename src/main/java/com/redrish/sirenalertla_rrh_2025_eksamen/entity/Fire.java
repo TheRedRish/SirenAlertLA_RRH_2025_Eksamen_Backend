@@ -1,6 +1,5 @@
 package com.redrish.sirenalertla_rrh_2025_eksamen.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +24,6 @@ public class Fire {
     private LocalDateTime endTime;
 
     @ManyToMany
-    @JsonBackReference
     @JoinTable(
             name = "fire_siren",
             joinColumns = @JoinColumn(name = "fire_id"),

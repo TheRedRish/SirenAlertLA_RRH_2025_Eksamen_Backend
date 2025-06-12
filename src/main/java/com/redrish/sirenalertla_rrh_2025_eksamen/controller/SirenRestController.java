@@ -1,5 +1,6 @@
 package com.redrish.sirenalertla_rrh_2025_eksamen.controller;
 
+import com.redrish.sirenalertla_rrh_2025_eksamen.entity.DTO.SirenRequestDTO;
 import com.redrish.sirenalertla_rrh_2025_eksamen.entity.Siren;
 import com.redrish.sirenalertla_rrh_2025_eksamen.service.SirenService;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,6 +27,16 @@ public class SirenRestController {
         return ResponseEntity.ok(sirens);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Siren> get(@PathVariable int id) {
+        try {
+            Siren siren = sirenService.getById(id);
+            return ResponseEntity.ok(siren);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Siren> create(@RequestBody Siren siren) {
         Siren created = sirenService.create(siren);
@@ -33,9 +44,10 @@ public class SirenRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Siren> update(@PathVariable int id, @RequestBody Siren updated) {
+    public ResponseEntity<Siren> update(@PathVariable int id, @RequestBody SirenRequestDTO updated) {
         try {
-            Siren updatedSiren = sirenService.update(id, updated);
+            Siren sirenToUpdate = updated.toSiren();
+            Siren updatedSiren = sirenService.update(id, sirenToUpdate);
             return ResponseEntity.ok(updatedSiren);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
