@@ -1,13 +1,17 @@
 package com.redrish.sirenalertla_rrh_2025_eksamen.config;
 
+import com.redrish.sirenalertla_rrh_2025_eksamen.entity.Fire;
 import com.redrish.sirenalertla_rrh_2025_eksamen.entity.Location;
 import com.redrish.sirenalertla_rrh_2025_eksamen.entity.Siren;
 import com.redrish.sirenalertla_rrh_2025_eksamen.entity.SirenStatus;
+import com.redrish.sirenalertla_rrh_2025_eksamen.repository.FireRepository;
 import com.redrish.sirenalertla_rrh_2025_eksamen.repository.SirenRepository;
+import com.redrish.sirenalertla_rrh_2025_eksamen.service.FireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +19,11 @@ import java.util.List;
 public class InitData implements CommandLineRunner {
 
     private final SirenRepository sirenRepository;
+    private final FireService fireService;
 
-    public InitData(SirenRepository sirenRepository) {
+    public InitData(SirenRepository sirenRepository, FireService fireService) {
         this.sirenRepository = sirenRepository;
+        this.fireService = fireService;
     }
 
     @Override
@@ -55,5 +61,9 @@ public class InitData implements CommandLineRunner {
         sirens.add(new Siren(new Location(34.0720, -118.2450), SirenStatus.SAFE, true, "Angels Point")); // Replaces repeat Echo Park
 
         sirenRepository.saveAll(sirens);
+
+        fireService.createFire(34.0522, -118.2437);
+        fireService.createFire(34.1, -118.3);
+
     }
 }
