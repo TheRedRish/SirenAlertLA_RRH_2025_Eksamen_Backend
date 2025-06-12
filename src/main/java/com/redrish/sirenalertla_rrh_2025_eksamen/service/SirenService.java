@@ -50,7 +50,7 @@ public class SirenService {
                 .toList();
 
         // Remove siren from fires it is no longer in range of
-        List<Fire> previouslyLinkedFires = siren.getFire();
+        List<Fire> previouslyLinkedFires = new ArrayList<>(siren.getFire());
         for (Fire fire : previouslyLinkedFires) {
             if (!firesNowInRange.contains(fire)) {
                 fire.getSirens().remove(siren);
@@ -67,7 +67,7 @@ public class SirenService {
         }
 
         // Update siren status
-        siren.setStatus(firesNowInRange.isEmpty() ? SirenStatus.SAFE : SirenStatus.EMERGENCY);
+        siren.setStatus(!firesNowInRange.isEmpty() && siren.isActive() ? SirenStatus.EMERGENCY : SirenStatus.SAFE);
 
         return sirenRepository.save(siren);
     }
