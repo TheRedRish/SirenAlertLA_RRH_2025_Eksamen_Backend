@@ -80,7 +80,7 @@ class SirenServiceTest {
     }
 
     @Test
-    void testUpdate() {
+    void testUpdateNewSirenInactive() {
         Location locOld = new Location(34.0, -118.0);
         Location locNew = new Location(30.001, -110.001);
 
@@ -108,8 +108,76 @@ class SirenServiceTest {
 
         assertEquals("New", result.getName());
         assertFalse(result.isActive());
-        assertEquals(SirenStatus.EMERGENCY, result.getStatus());
+        assertEquals(SirenStatus.SAFE, result.getStatus()); // Expected to be safe since new active status is false
         assertTrue(result.getFire().contains(nearbyFire));
+        verify(sirenRepository, times(1)).save(siren);
+    }
+
+    @Test
+    void testUpdateNewSirenActive() {
+        Location locOld = new Location(34.0, -118.0);
+        Location locNew = new Location(30.001, -110.001);
+
+        Siren siren = new Siren();
+        siren.setLocation(locOld);
+        siren.setActive(false);
+        siren.setName("Old");
+        siren.setFire(new ArrayList<>());
+
+        Siren updated = new Siren();
+        updated.setLocation(locNew);
+        updated.setActive(true);
+        updated.setName("New");
+
+        Fire nearbyFire = new Fire();
+        nearbyFire.setLocation(locNew);
+        nearbyFire.setSirens(new ArrayList<>());
+        List<Fire> fires = List.of(nearbyFire);
+
+        when(sirenRepository.findById(1)).thenReturn(Optional.of(siren));
+        when(fireRepository.findByEndTimeIsNull()).thenReturn(fires);
+        when(sirenRepository.save(any(Siren.class))).thenAnswer(i -> i.getArgument(0));
+
+        Siren result = sirenService.update(1, updated);
+
+        assertEquals("New", result.getName());
+        assertTrue(result.isActive());
+        assertEquals(SirenStatus.EMERGENCY, result.getStatus()); // Expected to be safe since new active status is false
+        assertTrue(result.getFire().contains(nearbyFire));
+        verify(sirenRepository, times(1)).save(siren);
+    }
+
+    @Test
+    void testUpdateNewSirenNoFire() {
+        Location locOld = new Location(34.0, -118.0);
+        Location locNew = new Location(30.001, -110.001);
+
+        Fire nearbyFire = new Fire();
+        nearbyFire.setLocation(locOld);
+        nearbyFire.setSirens(new ArrayList<>());
+        List<Fire> fires = List.of(nearbyFire);
+
+        Siren siren = new Siren();
+        siren.setLocation(locOld);
+        siren.setActive(false);
+        siren.setName("Old");
+        siren.setFire(new ArrayList<>(fires));
+
+        Siren updated = new Siren();
+        updated.setLocation(locNew);
+        updated.setActive(true);
+        updated.setName("New");
+
+        when(sirenRepository.findById(1)).thenReturn(Optional.of(siren));
+        when(fireRepository.findByEndTimeIsNull()).thenReturn(fires);
+        when(sirenRepository.save(any(Siren.class))).thenAnswer(i -> i.getArgument(0));
+
+        Siren result = sirenService.update(1, updated);
+
+        assertEquals("New", result.getName());
+        assertTrue(result.isActive());
+        assertEquals(SirenStatus.SAFE, result.getStatus()); // Expected to be safe since new active status is false
+        assertTrue(result.getFire().isEmpty());
         verify(sirenRepository, times(1)).save(siren);
     }
 }
